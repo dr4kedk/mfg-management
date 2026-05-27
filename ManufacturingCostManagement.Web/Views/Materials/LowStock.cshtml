@@ -1,0 +1,40 @@
+@model IEnumerable<Material>
+@{ ViewData["Title"] = Html.T("Materials.LowStockTitle"); }
+<div class="page-header">
+    <div><h2>@Html.T("Materials.LowStockTitle")</h2><div class="subtitle">@Html.T("Materials.LowStockSub")</div></div>
+    <a class="btn btn-outline-secondary" asp-controller="Materials" asp-action="Index">@Html.T("Materials.BackToMaterials")</a>
+</div>
+<div class="card">
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead><tr><th>@Html.T("Common.Code")</th><th>@Html.T("Common.Name")</th><th>@Html.T("Materials.Supplier")</th><th class="text-end">@Html.T("Materials.Stock")</th><th class="text-end">@Html.T("Materials.ReorderLevel")</th><th class="text-end pe-4">@Html.T("Materials.UnitCost")</th></tr></thead>
+            <tbody>
+            @foreach (var m in Model)
+            {
+                <tr>
+                    <td><code class="text-primary">@m.Code</code></td>
+                    <td class="fw-semibold">@m.Name</td>
+                    <td><small class="text-muted">@m.Supplier?.Name</small></td>
+                    <td class="text-end">
+                        <span class="badge bg-danger-subtle text-danger num-unit">
+                            <span class="num">⚠ @m.StockQuantity.ToString("N2")</span>
+                            <span class="unit">@m.Unit</span>
+                        </span>
+                    </td>
+                    <td class="text-end">
+                        <span class="num-unit">
+                            <span class="num">@m.ReorderLevel.ToString("N2")</span>
+                            <span class="unit">@m.Unit</span>
+                        </span>
+                    </td>
+                    <td class="text-end pe-4">@m.UnitCost.ToString("N0")</td>
+                </tr>
+            }
+            @if (!Model.Any())
+            {
+                <tr><td colspan="6" class="text-center text-success py-4">@Html.T("Materials.NoLowStock")</td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,22 @@
+@model Department
+@{ ViewData["Title"] = Html.T("Departments.EditTitle"); }
+<div class="page-header">
+    <div><h2>@Html.T("Departments.EditTitle")</h2><div class="subtitle">@Model.Code · @Model.Name</div></div>
+    <a class="btn btn-outline-secondary" asp-action="Index">← @Html.T("Common.Back")</a>
+</div>
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Edit" method="post" class="row g-3">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="CreatedAt" />
+            <div class="col-md-4"><label asp-for="Code" class="form-label">@Html.T("Common.Code")</label><input asp-for="Code" class="form-control" /></div>
+            <div class="col-md-8"><label asp-for="Name" class="form-label">@Html.T("Common.Name")</label><input asp-for="Name" class="form-control" /></div>
+            <div class="col-md-6"><label asp-for="Manager" class="form-label">@Html.T("Departments.Manager")</label><input asp-for="Manager" class="form-control" /></div>
+            <div class="col-12"><label asp-for="Description" class="form-label">@Html.T("Common.Description")</label><textarea asp-for="Description" class="form-control"></textarea></div>
+            <div class="col-12 d-flex gap-2 pt-2">
+                <button class="btn btn-primary">@Html.T("Common.SaveChanges")</button>
+                <a class="btn btn-outline-secondary" asp-action="Index">@Html.T("Common.Cancel")</a>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,51 @@
+@model ProductionOrder
+@{ ViewData["Title"] = Html.T("Production.EditTitle"); }
+<div class="page-header">
+    <div><h2>@Html.T("Production.EditTitle")</h2><div class="subtitle">@Model.OrderCode</div></div>
+    <a class="btn btn-outline-secondary" asp-action="Details" asp-route-id="@Model.Id">← @Html.T("Common.Back")</a>
+</div>
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Edit" method="post" class="row g-3">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="CreatedAt" />
+            <input type="hidden" asp-for="TotalMaterialCost" />
+            <input type="hidden" asp-for="TotalLaborCost" />
+            <input type="hidden" asp-for="TotalOverheadCost" />
+            <input type="hidden" asp-for="TotalCost" />
+            <div class="col-md-6"><label asp-for="OrderCode" class="form-label">@Html.T("Production.OrderCode")</label><input asp-for="OrderCode" class="form-control" /></div>
+            <div class="col-md-6">
+                <label asp-for="ProductId" class="form-label">@Html.T("Production.Product")</label>
+                <select asp-for="ProductId" asp-items="ViewBag.Products" class="form-select"></select>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="DepartmentId" class="form-label">@Html.T("Production.Department")</label>
+                <select asp-for="DepartmentId" asp-items="ViewBag.Departments" class="form-select"><option value="">--</option></select>
+            </div>
+            <div class="col-md-3"><label asp-for="Quantity" class="form-label">@Html.T("Production.Quantity")</label><input asp-for="Quantity" class="form-control" type="number" step="0.01" /></div>
+            <div class="col-md-3">
+                <label asp-for="Status" class="form-label">@Html.T("Common.Status")</label>
+                <select asp-for="Status" class="form-select">
+                    @foreach (var v in Enum.GetValues<ProductionStatus>())
+                    {
+                        var k = v switch {
+                            ProductionStatus.Pending => "Common.Pending",
+                            ProductionStatus.InProgress => "Common.InProgress",
+                            ProductionStatus.Completed => "Common.Completed",
+                            ProductionStatus.Cancelled => "Common.Cancelled",
+                            _ => "Common.Pending"
+                        };
+                        <option value="@((int)v)">@Html.T(k)</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3"><label asp-for="StartDate" class="form-label">@Html.T("Production.StartDate")</label><input asp-for="StartDate" class="form-control" type="date" /></div>
+            <div class="col-md-3"><label asp-for="EndDate" class="form-label">@Html.T("Production.EndDate")</label><input asp-for="EndDate" class="form-control" type="date" /></div>
+            <div class="col-12"><label asp-for="Notes" class="form-label">@Html.T("Common.Notes")</label><textarea asp-for="Notes" class="form-control"></textarea></div>
+            <div class="col-12 d-flex gap-2 pt-2">
+                <button class="btn btn-primary">@Html.T("Common.SaveChanges")</button>
+                <a class="btn btn-outline-secondary" asp-action="Details" asp-route-id="@Model.Id">@Html.T("Common.Cancel")</a>
+            </div>
+        </form>
+    </div>
+</div>

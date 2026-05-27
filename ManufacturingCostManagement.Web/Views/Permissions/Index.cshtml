@@ -1,0 +1,88 @@
+@using ManufacturingCostManagement.DAL.Entities
+@{
+    ViewData["Title"] = Html.T("Permissions.Title");
+    var roles = (List<Role>)ViewBag.Roles;
+    var permissions = (List<Permission>)ViewBag.Permissions;
+    var matrix = (HashSet<(int RoleId, int PermissionId)>)ViewBag.Matrix;
+    var groups = permissions.GroupBy(p => p.Module).OrderBy(g => g.Key).ToList();
+}
+
+<div class="page-header">
+    <div>
+        <h2>@Html.T("Permissions.Title")</h2>
+        <div class="subtitle">@Html.T("Permissions.Subtitle")</div>
+    </div>
+    <a class="btn btn-outline-secondary" asp-controller="Dashboard" asp-action="Index">← @Html.T("Common.Back")</a>
+</div>
+
+<form asp-action="Save" method="post">
+    @Html.AntiForgeryToken()
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <div>@Html.T("Permissions.MatrixTitle")</div>
+                <small class="text-muted fw-normal">@Html.T("Permissions.MatrixSub")</small>
+            </div>
+            <button class="btn btn-primary"><i class="bi bi-check2"></i> @Html.T("Common.SaveChanges")</button>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0 align-middle">
+                <thead>
+                    <tr>
+                        <th style="min-width:180px;">@Html.T("Permissions.PermissionCol")</th>
+                        @foreach (var role in roles)
+                        {
+                            var roleBg = role.Name switch {
+                                "Admin" => "danger-subtle text-danger-emphasis",
+                                "Manager" => "primary-subtle text-primary-emphasis",
+                                "Accountant" => "warning-subtle text-warning-emphasis",
+                                _ => "secondary-subtle text-secondary-emphasis"
+                            };
+                            <th class="text-center"><span class="badge bg-@roleBg">@role.Name</span></th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var group in groups)
+                    {
+                        <tr class="table-light">
+                            <td class="fw-bold text-uppercase small" colspan="@(roles.Count + 1)" style="background:#f8fafc;color:#334155;letter-spacing:.06em;">
+                                @group.Key
+                            </td>
+                        </tr>
+                        foreach (var perm in group.OrderBy(p => p.Action))
+                        {
+                            <tr>
+                                <td>
+                                    <div class="fw-semibold">@perm.Action</div>
+                                    <small class="text-muted">@perm.Description</small>
+                                </td>
+                                @foreach (var role in roles)
+                                {
+                                    var isAdmin = role.Name == "Admin";
+                                    var checkedAttr = isAdmin || matrix.Contains((role.Id, perm.Id)) ? "checked" : "";
+                                    var disabledAttr = isAdmin ? "disabled" : "";
+                                    <td class="text-center">
+                                        <input type="checkbox"
+                                               class="form-check-input"
+                                               name="role_@role.Id"
+                                               value="@perm.Id"
+                                               @checkedAttr
+                                               @disabledAttr />
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer bg-white text-end">
+            <button class="btn btn-primary"><i class="bi bi-check2"></i> @Html.T("Common.SaveChanges")</button>
+        </div>
+    </div>
+</form>
+
+<div class="alert alert-success mt-3 small">
+    <strong>@Html.T("Permissions.NoteTitle")</strong> @Html.T("Permissions.NoteBody")
+</div>

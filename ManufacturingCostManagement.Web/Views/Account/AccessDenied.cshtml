@@ -1,0 +1,6 @@
+@{ ViewData["Title"] = Html.T("Account.AccessDenied"); }
+<div class="alert alert-danger mt-4">
+    <h4>@Html.T("Account.AccessDenied")</h4>
+    <p>@Html.T("Account.AccessDeniedSub")</p>
+    <a class="btn btn-secondary" asp-controller="Dashboard" asp-action="Index">← @Html.T("Nav.Dashboard")</a>
+</div>

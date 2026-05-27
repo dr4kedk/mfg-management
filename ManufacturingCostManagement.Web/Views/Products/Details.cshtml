@@ -1,0 +1,77 @@
+@model Product
+@{
+    ViewData["Title"] = Model.Name;
+    var materialCost = (decimal)(ViewBag.MaterialCost ?? 0m);
+    var profit = Model.SellingPrice - materialCost;
+    var marginPercent = Model.SellingPrice > 0 ? (profit / Model.SellingPrice * 100) : 0;
+}
+
+<div class="page-header">
+    <div><h2>@Model.Code <span class="text-muted">— @Model.Name</span></h2><div class="subtitle">@Html.T("Products.Title")</div></div>
+    <div>
+        @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+        {
+            <a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@Model.Id"><i class="bi bi-pencil-square"></i> @Html.T("Common.Edit")</a>
+        }
+        <a class="btn btn-outline-secondary" asp-action="Index">← @Html.T("Common.Back")</a>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="card h-100"><div class="card-body"><div class="stat-label">@Html.T("Products.Category")</div><h5 class="mb-0 mt-1">@Model.Category</h5></div></div></div>
+    <div class="col-md-3"><div class="card h-100"><div class="card-body"><div class="stat-label">@Html.T("Products.SellingPrice")</div><h5 class="mb-0 mt-1 text-success">@Model.SellingPrice.ToString("N0") VND</h5></div></div></div>
+    <div class="col-md-3"><div class="card h-100"><div class="card-body"><div class="stat-label">@Html.T("Products.MaterialCost")</div><h5 class="mb-0 mt-1 text-primary">@materialCost.ToString("N0") VND</h5></div></div></div>
+    <div class="col-md-3"><div class="card h-100"><div class="card-body"><div class="stat-label">@Html.T("Products.GrossMargin")</div><h5 class="mb-0 mt-1 @(profit >= 0 ? "text-success" : "text-danger")">@marginPercent.ToString("F1")%</h5><small class="text-muted">@profit.ToString("N0") VND</small></div></div></div>
+</div>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+            <div>@Html.T("Products.BomTitle")</div>
+            <small class="text-muted fw-normal">@Html.T("Products.BomSub")</small>
+        </div>
+        @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+        {
+            <a class="btn btn-sm btn-primary" asp-action="AddBom" asp-route-productId="@Model.Id">@Html.T("Products.AddMaterial")</a>
+        }
+    </div>
+    <div class="card-body p-0">
+        <table class="table mb-0">
+            <thead><tr><th>@Html.T("Products.Material")</th><th>@Html.T("Common.Code")</th><th class="text-end">@Html.T("Products.Qty")</th><th class="text-end">@Html.T("Materials.UnitCost")</th><th class="text-end">@Html.T("Products.Subtotal")</th><th class="text-end pe-4"></th></tr></thead>
+            <tbody>
+            @foreach (var b in Model.BillOfMaterials)
+            {
+                var sub = b.QuantityRequired * (b.Material?.UnitCost ?? 0);
+                <tr>
+                    <td class="fw-semibold">@b.Material?.Name</td>
+                    <td><code class="text-primary">@b.Material?.Code</code></td>
+                    <td class="text-end">
+                        <span class="num-unit">
+                            <span class="num">@b.QuantityRequired.ToString("N4")</span>
+                            <span class="unit">@b.Material?.Unit</span>
+                        </span>
+                    </td>
+                    <td class="text-end">@(b.Material?.UnitCost.ToString("N0") ?? "-")</td>
+                    <td class="text-end fw-semibold">@sub.ToString("N0")</td>
+                    <td class="text-end pe-4">
+                        @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                        {
+                            <form asp-action="RemoveBom" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@b.Id" />
+                                <input type="hidden" name="productId" value="@Model.Id" />
+                                <button class="btn btn-sm btn-outline-danger" onclick="return confirm('@Html.T("Common.ConfirmDelete")')"><i class="bi bi-x-circle"></i> @Html.T("Common.Remove")</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+            @if (!Model.BillOfMaterials.Any())
+            {
+                <tr><td colspan="6" class="text-center text-muted py-4">@Html.T("Products.NoBom")</td></tr>
+            }
+            </tbody>
+            <tfoot class="table-light"><tr><th colspan="4" class="text-end">@Html.T("Products.TotalMaterialCost"):</th><th class="text-end fw-bold text-primary">@materialCost.ToString("N0") VND</th><th></th></tr></tfoot>
+        </table>
+    </div>
+</div>

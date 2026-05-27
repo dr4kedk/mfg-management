@@ -1,0 +1,25 @@
+@model BillOfMaterial
+@{ ViewData["Title"] = Html.T("Products.AddBomTitle"); }
+<div class="page-header">
+    <div><h2>@Html.T("Products.AddBomTitle")</h2><div class="subtitle">@ViewBag.ProductName</div></div>
+    <a class="btn btn-outline-secondary" asp-action="Details" asp-route-id="@Model.ProductId">← @Html.T("Common.Back")</a>
+</div>
+<div class="card">
+    <div class="card-body">
+        <form asp-action="AddBom" method="post" class="row g-3">
+            <input type="hidden" asp-for="ProductId" />
+            <div class="col-md-8">
+                <label asp-for="MaterialId" class="form-label">@Html.T("Products.Material")</label>
+                <select asp-for="MaterialId" asp-items="ViewBag.Materials" class="form-select"></select>
+            </div>
+            <div class="col-md-4">
+                <label asp-for="QuantityRequired" class="form-label">@Html.T("Products.QtyPerUnit")</label>
+                <input asp-for="QuantityRequired" class="form-control" type="number" step="0.0001" />
+            </div>
+            <div class="col-12 d-flex gap-2 pt-2">
+                <button class="btn btn-primary">@Html.T("Products.AddToBom")</button>
+                <a class="btn btn-outline-secondary" asp-action="Details" asp-route-id="@Model.ProductId">@Html.T("Common.Cancel")</a>
+            </div>
+        </form>
+    </div>
+</div>

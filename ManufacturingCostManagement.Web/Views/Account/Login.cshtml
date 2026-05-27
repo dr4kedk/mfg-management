@@ -1,0 +1,150 @@
+@model LoginViewModel
+@using System.Globalization
+@{
+    ViewData["Title"] = Html.T("Login.SignInBtn");
+    Layout = null;
+    var currentCulture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+}
+<!DOCTYPE html>
+<html lang="@currentCulture">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@Html.T("Login.SignInBtn") — @Html.T("App.Title")</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0f172a 100%);
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px;
+            color: #1f2937;
+        }
+        .login-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            max-width: 980px; width: 100%;
+            background: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.05);
+        }
+        .brand-panel {
+            background: linear-gradient(160deg, #1e40af 0%, #0c1f4e 100%);
+            color: #fff;
+            padding: 48px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        .brand-panel::before {
+            content: ''; position: absolute; top: -80px; right: -80px;
+            width: 280px; height: 280px;
+            background: radial-gradient(circle, rgba(59,130,246,.45), transparent 70%);
+            border-radius: 50%;
+        }
+        .brand-panel::after {
+            content: ''; position: absolute; bottom: -100px; left: -100px;
+            width: 320px; height: 320px;
+            background: radial-gradient(circle, rgba(96,165,250,.25), transparent 70%);
+            border-radius: 50%;
+        }
+        .brand-panel > * { position: relative; z-index: 1; }
+        .brand-logo { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; font-size: 22px; margin-bottom: 48px; }
+        .logo-mark {
+            width: 36px; height: 36px;
+            background: rgba(255,255,255,.15);
+            border-radius: 9px;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 18px;
+            border: 1px solid rgba(255,255,255,.18);
+        }
+        .brand-headline { font-size: 30px; font-weight: 700; line-height: 1.2; margin-bottom: 14px; letter-spacing: -.02em; }
+        .brand-sub { color: rgba(255,255,255,.7); margin-bottom: 36px; font-size: 15px; line-height: 1.55; }
+        .feature { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 18px; color: rgba(255,255,255,.85); font-size: 14px; }
+        .feature .dot { width: 8px; height: 8px; border-radius: 50%; background: #60a5fa; margin-top: 6px; flex-shrink: 0; box-shadow: 0 0 0 4px rgba(96,165,250,.18); }
+        .lang-toggle {
+            position: absolute; top: 20px; right: 20px; z-index: 2;
+            background: rgba(255,255,255,.12); color: #fff;
+            padding: 6px 12px; border-radius: 999px;
+            font-size: 12px; border: 1px solid rgba(255,255,255,.2);
+            cursor: pointer;
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        .lang-toggle a { color: rgba(255,255,255,.7); padding: 0 4px; }
+        .lang-toggle a.active-lang { color: #fff; font-weight: 600; }
+        .lang-toggle a:hover { color: #fff; }
+        .form-panel { padding: 56px 48px; display: flex; flex-direction: column; justify-content: center; }
+        .form-panel h2 { font-weight: 700; font-size: 28px; margin-bottom: 6px; color: #111827; letter-spacing: -.02em; }
+        .form-panel .lead { color: #6b7280; font-size: 14px; margin-bottom: 32px; }
+        .form-label { font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .03em; }
+        .form-control { padding: 12px 14px; border-radius: 10px; border: 1px solid #e5e7eb; font-size: 15px; transition: all .15s; background: #f9fafb; }
+        .form-control:focus { border-color: #2563eb; box-shadow: 0 0 0 4px rgba(37,99,235,.12); background: #fff; }
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            border: none; padding: 13px; font-weight: 600; border-radius: 10px; font-size: 15px;
+            box-shadow: 0 8px 20px rgba(37,99,235,.3);
+            transition: transform .12s, box-shadow .12s;
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(37,99,235,.4); background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%); }
+        @@media (max-width: 768px) {
+            .login-wrapper { grid-template-columns: 1fr; max-width: 440px; }
+            .brand-panel { display: none; }
+            .form-panel { padding: 40px 28px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="brand-panel">
+            <div class="lang-toggle">
+                🌐
+                <a class="@(currentCulture == "en" ? "active-lang" : "")" href="/Language/Set?culture=en&returnUrl=@returnUrl">EN</a>|
+                <a class="@(currentCulture == "vi" ? "active-lang" : "")" href="/Language/Set?culture=vi&returnUrl=@returnUrl">VI</a>
+            </div>
+            <div class="brand-logo">
+                <span class="logo-mark">⚙</span>
+                @Html.T("App.Brand")
+            </div>
+            <h1 class="brand-headline">@Html.Raw(Html.T("Login.Headline"))</h1>
+            <p class="brand-sub">@Html.T("Login.Sub")</p>
+
+            <div class="feature"><span class="dot"></span><span>@Html.T("Login.Feature1")</span></div>
+            <div class="feature"><span class="dot"></span><span>@Html.T("Login.Feature2")</span></div>
+            <div class="feature"><span class="dot"></span><span>@Html.T("Login.Feature3")</span></div>
+            <div class="feature"><span class="dot"></span><span>@Html.T("Login.Feature4")</span></div>
+        </div>
+
+        <div class="form-panel">
+            <h2>@Html.T("Login.Welcome")</h2>
+            <p class="lead">@Html.T("Login.Subtitle")</p>
+
+            <form asp-action="Login" method="post" novalidate>
+                <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small mb-3" role="alert"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Username" class="form-label">@Html.T("Login.Username")</label>
+                    <input asp-for="Username" class="form-control" autocomplete="username" autofocus placeholder="@Html.T("Login.UsernamePlaceholder")" />
+                    <span asp-validation-for="Username" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label">@Html.T("Login.Password")</label>
+                    <input asp-for="Password" class="form-control" autocomplete="current-password" placeholder="@Html.T("Login.PasswordPlaceholder")" />
+                    <span asp-validation-for="Password" class="text-danger small"></span>
+                </div>
+
+                <div class="form-check mb-4">
+                    <input asp-for="RememberMe" class="form-check-input" />
+                    <label asp-for="RememberMe" class="form-check-label small text-muted">@Html.T("Login.RememberMe")</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">@Html.T("Login.SignInBtn") →</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

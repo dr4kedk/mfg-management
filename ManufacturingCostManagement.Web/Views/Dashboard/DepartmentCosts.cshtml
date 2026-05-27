@@ -1,0 +1,168 @@
+@model IEnumerable<DepartmentCostDto>
+@{
+    ViewData["Title"] = Html.T("Reports.DeptCostTitle");
+    var jsonOpts = new System.Text.Json.JsonSerializerOptions
+    {
+        PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase,
+        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+    };
+    var deptJson = System.Text.Json.JsonSerializer.Serialize(Model, jsonOpts);
+    var lblJson = System.Text.Json.JsonSerializer.Serialize(new
+    {
+        material = AppText.Get("Dashboard.MaterialCost"),
+        labor = AppText.Get("Dashboard.LaborCost"),
+        overhead = AppText.Get("Dashboard.OverheadCost"),
+        total = AppText.Get("Common.Total")
+    }, jsonOpts);
+}
+<div class="page-header">
+    <div><h2>@Html.T("Reports.DeptCostTitle")</h2><div class="subtitle">@Html.T("Reports.DeptCostSub")</div></div>
+    <a class="btn btn-outline-secondary" asp-controller="Dashboard" asp-action="Index">@Html.T("Reports.BackDashboard")</a>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-7">
+        <div class="card h-100">
+            <div class="card-header">@Html.T("Reports.DeptTable")</div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>@Html.T("Common.Code")</th>
+                            <th>@Html.T("Reports.Department")</th>
+                            <th class="text-end">@Html.T("Dashboard.OrdersCol")</th>
+                            <th class="text-end">@Html.T("Dashboard.MaterialCost")</th>
+                            <th class="text-end">@Html.T("Dashboard.LaborCost")</th>
+                            <th class="text-end">@Html.T("Dashboard.OverheadCost")</th>
+                            <th class="text-end pe-4">@Html.T("Reports.TotalCostCol") (VND)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var d in Model)
+                    {
+                        <tr>
+                            <td><code class="text-primary">@d.DepartmentCode</code></td>
+                            <td class="fw-semibold">@d.DepartmentName</td>
+                            <td class="text-end">@d.OrderCount</td>
+                            <td class="text-end text-primary">@d.MaterialCost.ToString("N0")</td>
+                            <td class="text-end text-info">@d.LaborCost.ToString("N0")</td>
+                            <td class="text-end text-warning">@d.OverheadCost.ToString("N0")</td>
+                            <td class="text-end fw-bold pe-4">@d.TotalCost.ToString("N0")</td>
+                        </tr>
+                    }
+                    </tbody>
+                    <tfoot class="table-dark">
+                        <tr>
+                            <th colspan="3" class="ps-3">@Html.T("Common.Total").ToUpper()</th>
+                            <th class="text-end">@Model.Sum(d => d.MaterialCost).ToString("N0")</th>
+                            <th class="text-end">@Model.Sum(d => d.LaborCost).ToString("N0")</th>
+                            <th class="text-end">@Model.Sum(d => d.OverheadCost).ToString("N0")</th>
+                            <th class="text-end pe-4">@Model.Sum(d => d.TotalCost).ToString("N0")</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="card h-100">
+            <div class="card-header">
+                <div>@Html.T("Reports.DeptChartTitle")</div>
+                <small class="text-muted fw-normal">@Html.T("Reports.DeptChartSub")</small>
+            </div>
+            <div class="card-body">
+                <div style="position:relative;height:430px;"><canvas id="deptChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    const data = @Html.Raw(deptJson);
+    const lbl = @Html.Raw(lblJson);
+    Chart.defaults.font.family = "system-ui, -apple-system, 'Segoe UI', sans-serif";
+    Chart.defaults.font.size = 12;
+    Chart.defaults.color = '#475569';
+    Chart.defaults.borderColor = '#eef2f7';
+
+    function fmtCompact(v) {
+        if (v >= 1_000_000_000) return (v/1_000_000_000).toFixed(1) + 'B';
+        if (v >= 1_000_000) return (v/1_000_000).toFixed(0) + 'M';
+        if (v >= 1_000) return (v/1_000).toFixed(0) + 'K';
+        return v.toString();
+    }
+    const tooltipStyle = {
+        backgroundColor: 'rgba(15,23,42,.95)',
+        titleColor: '#fff',
+        bodyColor: '#cbd5e1',
+        borderColor: 'rgba(255,255,255,.08)',
+        borderWidth: 1,
+        padding: 10,
+        cornerRadius: 8,
+        boxPadding: 6,
+        titleFont: { weight: '600', size: 12 },
+        bodyFont: { size: 12 }
+    };
+
+    new Chart(document.getElementById('deptChart'), {
+        type: 'bar',
+        data: {
+            labels: data.map(d => d.departmentName),
+            datasets: [
+                {
+                    label: lbl.material,
+                    data: data.map(d => d.materialCost),
+                    backgroundColor: '#3b82f6',
+                    hoverBackgroundColor: '#1d4ed8',
+                    borderRadius: 4, borderSkipped: false
+                },
+                {
+                    label: lbl.labor,
+                    data: data.map(d => d.laborCost),
+                    backgroundColor: '#22d3ee',
+                    hoverBackgroundColor: '#0891b2',
+                    borderRadius: 4, borderSkipped: false
+                },
+                {
+                    label: lbl.overhead,
+                    data: data.map(d => d.overheadCost),
+                    backgroundColor: '#fbbf24',
+                    hoverBackgroundColor: '#d97706',
+                    borderRadius: 4, borderSkipped: false
+                }
+            ]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true, maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            animation: { duration: 700, easing: 'easeOutQuart' },
+            plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 10, boxHeight: 10, padding: 12, usePointStyle: true, pointStyle: 'circle' } },
+                tooltip: Object.assign({}, tooltipStyle, {
+                    callbacks: {
+                        label: ctx => '  ' + ctx.dataset.label + ': ' + ctx.parsed.x.toLocaleString() + ' VND',
+                        footer: items => {
+                            const sum = items.reduce((s, i) => s + i.parsed.x, 0);
+                            return lbl.total + ': ' + sum.toLocaleString() + ' VND';
+                        }
+                    }
+                })
+            },
+            scales: {
+                x: {
+                    stacked: true,
+                    ticks: { callback: fmtCompact, padding: 6 },
+                    grid: { color: '#eef2f7', drawTicks: false }
+                },
+                y: {
+                    stacked: true,
+                    grid: { display: false },
+                    ticks: { font: { weight: '500' } }
+                }
+            }
+        }
+    });
+</script>
+}

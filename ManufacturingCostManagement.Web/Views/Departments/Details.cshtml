@@ -1,0 +1,21 @@
+@model Department
+@{ ViewData["Title"] = Model.Name; }
+<div class="page-header">
+    <div><h2>@Model.Code <span class="text-muted">— @Model.Name</span></h2><div class="subtitle">@Html.T("Departments.Title")</div></div>
+    <div>
+        @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+        {
+            <a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@Model.Id"><i class="bi bi-pencil-square"></i> @Html.T("Common.Edit")</a>
+        }
+        <a class="btn btn-outline-secondary" asp-action="Index">← @Html.T("Common.Back")</a>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3 text-muted">@Html.T("Departments.Manager")</dt><dd class="col-sm-9">@Model.Manager</dd>
+            <dt class="col-sm-3 text-muted">@Html.T("Common.Description")</dt><dd class="col-sm-9">@Model.Description</dd>
+            <dt class="col-sm-3 text-muted">@Html.T("Suppliers.Registered")</dt><dd class="col-sm-9">@Model.CreatedAt.ToString("dd MMM yyyy")</dd>
+        </dl>
+    </div>
+</div>

@@ -1,0 +1,131 @@
+@{ ViewData["Title"] = Html.T("Docs.Title"); }
+
+<div class="page-header">
+    <div>
+        <h2>@Html.T("Docs.Title")</h2>
+        <div class="subtitle">@Html.T("Docs.Subtitle")</div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <aside class="col-lg-3 d-none d-lg-block">
+        <div class="card position-sticky" style="top: 16px;">
+            <div class="card-header">@Html.T("Docs.TocTitle")</div>
+            <div class="list-group list-group-flush small">
+                <a class="list-group-item list-group-item-action" href="#overview">@Html.T("Docs.Overview")</a>
+                <a class="list-group-item list-group-item-action" href="#roles">@Html.T("Docs.Roles")</a>
+                <a class="list-group-item list-group-item-action" href="#modules">@Html.T("Docs.Modules")</a>
+                <a class="list-group-item list-group-item-action" href="#cost">@Html.T("Docs.Cost")</a>
+                <a class="list-group-item list-group-item-action" href="#reports">@Html.T("Docs.Reports")</a>
+                <a class="list-group-item list-group-item-action" href="#features">@Html.T("Docs.Features")</a>
+                <a class="list-group-item list-group-item-action" href="#defaults">@Html.T("Docs.Defaults")</a>
+                <a class="list-group-item list-group-item-action" href="#stack">@Html.T("Docs.Stack")</a>
+            </div>
+        </div>
+    </aside>
+
+    <div class="col-lg-9">
+        <section id="overview" class="card mb-3">
+            <div class="card-header"><span class="me-2">📖</span>@Html.T("Docs.Overview")</div>
+            <div class="card-body"><p class="mb-0">@Html.T("Docs.OverviewBody")</p></div>
+        </section>
+
+        <section id="roles" class="card mb-3">
+            <div class="card-header"><span class="me-2">👥</span>@Html.T("Docs.Roles")</div>
+            <div class="card-body">
+                <p>@Html.T("Docs.RolesBody")</p>
+                <ul class="mb-0">
+                    <li><strong>Admin</strong> — <span>@Html.T("Docs.RoleAdmin").Substring(Html.T("Docs.RoleAdmin").IndexOf('—') + 1).Trim()</span></li>
+                    <li><strong>Manager</strong> — <span>@Html.T("Docs.RoleManager").Substring(Html.T("Docs.RoleManager").IndexOf('—') + 1).Trim()</span></li>
+                    <li><strong>Accountant</strong> — <span>@Html.T("Docs.RoleAccountant").Substring(Html.T("Docs.RoleAccountant").IndexOf('—') + 1).Trim()</span></li>
+                    <li><strong>Employee</strong> — <span>@Html.T("Docs.RoleEmployee").Substring(Html.T("Docs.RoleEmployee").IndexOf('—') + 1).Trim()</span></li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="modules" class="card mb-3">
+            <div class="card-header"><span class="me-2">🧩</span>@Html.T("Docs.Modules")</div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li>@Html.T("Docs.ModSuppliers")</li>
+                    <li>@Html.T("Docs.ModMaterials")</li>
+                    <li>@Html.T("Docs.ModProducts")</li>
+                    <li>@Html.T("Docs.ModDepartments")</li>
+                    <li>@Html.T("Docs.ModOrders")</li>
+                    <li>@Html.T("Docs.ModLaborOH")</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="cost" class="card mb-3">
+            <div class="card-header"><span class="me-2">💰</span>@Html.T("Docs.Cost")</div>
+            <div class="card-body">
+                <p>@Html.T("Docs.CostBody")</p>
+                <div class="row g-2 mb-3">
+                    <div class="col-md-12">
+                        <div class="p-3 rounded" style="background:#eff6ff;border-left:3px solid #2563eb;">
+                            <strong class="text-primary">@Html.T("Docs.CostMaterial")</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="p-3 rounded" style="background:#ecfeff;border-left:3px solid #0dcaf0;">
+                            <strong class="text-info">@Html.T("Docs.CostLabor")</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="p-3 rounded" style="background:#fef9c3;border-left:3px solid #f59e0b;">
+                            <strong class="text-warning">@Html.T("Docs.CostOverhead")</strong>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-muted mb-0 small">@Html.T("Docs.CostRecalc")</p>
+            </div>
+        </section>
+
+        <section id="reports" class="card mb-3">
+            <div class="card-header"><span class="me-2">📊</span>@Html.T("Docs.Reports")</div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li>@Html.T("Docs.ReportsDashboard")</li>
+                    <li>@Html.T("Docs.ReportsCostAnalysis")</li>
+                    <li>@Html.T("Docs.ReportsDept")</li>
+                    <li>@Html.T("Docs.ReportsLowStock")</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="features" class="card mb-3">
+            <div class="card-header"><span class="me-2">⚡</span>@Html.T("Docs.Features")</div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li>@Html.T("Docs.FeatSearch")</li>
+                    <li>@Html.T("Docs.FeatLang")</li>
+                    <li>@Html.T("Docs.FeatPerm")</li>
+                    <li>@Html.T("Docs.FeatI18nPwd")</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="defaults" class="card mb-3">
+            <div class="card-header"><span class="me-2">🔑</span>@Html.T("Docs.Defaults")</div>
+            <div class="card-body">
+                <p>@Html.T("Docs.DefaultsBody")</p>
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr><th>Role</th><th>Username</th><th>Password</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><span class="badge bg-danger-subtle text-danger-emphasis">Admin</span></td><td><code>admin</code></td><td><code>admin123</code></td></tr>
+                        <tr><td><span class="badge bg-primary-subtle text-primary-emphasis">Manager</span></td><td><code>manager</code></td><td><code>manager123</code></td></tr>
+                        <tr><td><span class="badge bg-warning-subtle text-warning-emphasis">Accountant</span></td><td><code>accountant</code></td><td><code>acc123</code></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="stack" class="card mb-3">
+            <div class="card-header"><span class="me-2">🛠</span>@Html.T("Docs.Stack")</div>
+            <div class="card-body"><p class="mb-0 text-muted">@Html.T("Docs.StackBody")</p></div>
+        </section>
+    </div>
+</div>

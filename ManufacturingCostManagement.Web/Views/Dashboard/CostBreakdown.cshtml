@@ -1,0 +1,45 @@
+@model IEnumerable<ProductCostBreakdownDto>
+@{ ViewData["Title"] = Html.T("Reports.CostBreakdownTitle"); }
+<div class="page-header">
+    <div><h2>@Html.T("Reports.CostBreakdownTitle")</h2><div class="subtitle">@Html.T("Reports.CostBreakdownSub")</div></div>
+    <a class="btn btn-outline-secondary" asp-controller="Dashboard" asp-action="Index">@Html.T("Reports.BackDashboard")</a>
+</div>
+<div class="card">
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>@Html.T("Common.Code")</th>
+                    <th>@Html.T("Dashboard.Product")</th>
+                    <th class="text-end">@Html.T("Reports.MaterialPerUnit")</th>
+                    <th class="text-end">@Html.T("Reports.AvgLaborPerUnit")</th>
+                    <th class="text-end">@Html.T("Reports.AvgOverheadPerUnit")</th>
+                    <th class="text-end">@Html.T("Reports.TotalCostCol")</th>
+                    <th class="text-end">@Html.T("Reports.SellingPriceCol")</th>
+                    <th class="text-end">@Html.T("Reports.Profit")</th>
+                    <th class="text-end pe-4">@Html.T("Reports.Margin")</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var b in Model)
+            {
+                <tr>
+                    <td><code class="text-primary">@b.ProductCode</code></td>
+                    <td class="fw-semibold">@b.ProductName</td>
+                    <td class="text-end text-primary">@b.MaterialCostPerUnit.ToString("N0")</td>
+                    <td class="text-end text-info">@b.AverageLaborCostPerUnit.ToString("N0")</td>
+                    <td class="text-end text-warning">@b.AverageOverheadCostPerUnit.ToString("N0")</td>
+                    <td class="text-end fw-bold">@b.TotalCostPerUnit.ToString("N0")</td>
+                    <td class="text-end">@b.SellingPrice.ToString("N0")</td>
+                    <td class="text-end fw-semibold @(b.ProfitMargin >= 0 ? "text-success" : "text-danger")">@b.ProfitMargin.ToString("N0")</td>
+                    <td class="text-end pe-4">
+                        @if (b.ProfitMarginPercent >= 30) { <span class="badge bg-success-subtle text-success-emphasis">@b.ProfitMarginPercent.ToString("F1")%</span> }
+                        else if (b.ProfitMarginPercent >= 0) { <span class="badge bg-warning-subtle text-warning-emphasis">@b.ProfitMarginPercent.ToString("F1")%</span> }
+                        else { <span class="badge bg-danger-subtle text-danger-emphasis">@b.ProfitMarginPercent.ToString("F1")%</span> }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

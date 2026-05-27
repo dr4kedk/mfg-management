@@ -1,0 +1,134 @@
+@model ProductionOrder
+@{
+    ViewData["Title"] = Model.OrderCode;
+    var (statusClass, statusIcon) = Model.Status switch
+    {
+        ProductionStatus.Pending => ("secondary-subtle text-secondary-emphasis", "⏳"),
+        ProductionStatus.InProgress => ("info-subtle text-info-emphasis", "🔄"),
+        ProductionStatus.Completed => ("success-subtle text-success-emphasis", "✓"),
+        ProductionStatus.Cancelled => ("danger-subtle text-danger-emphasis", "✕"),
+        _ => ("secondary-subtle text-secondary-emphasis", "")
+    };
+    var statusKey = Model.Status switch {
+        ProductionStatus.Pending => "Common.Pending",
+        ProductionStatus.InProgress => "Common.InProgress",
+        ProductionStatus.Completed => "Common.Completed",
+        ProductionStatus.Cancelled => "Common.Cancelled",
+        _ => "Common.Pending"
+    };
+}
+
+<div class="page-header">
+    <div>
+        <h2>@Model.OrderCode <span class="badge bg-@statusClass align-middle ms-2">@statusIcon @Html.T(statusKey)</span></h2>
+        <div class="subtitle">@Model.Product?.Name · @Model.Quantity.ToString("N0") @Html.T("Production.Units")</div>
+    </div>
+    <div class="d-flex gap-2">
+        @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+        {
+            <form asp-action="Recalculate" asp-route-id="@Model.Id" method="post" class="d-inline">
+                @Html.AntiForgeryToken()
+                <button class="btn btn-outline-info">@Html.T("Production.Recalculate")</button>
+            </form>
+            @if (Model.Status != ProductionStatus.Completed)
+            {
+                <form asp-action="Complete" asp-route-id="@Model.Id" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <button class="btn btn-success">@Html.T("Production.MarkComplete")</button>
+                </form>
+            }
+            <a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@Model.Id"><i class="bi bi-pencil-square"></i> @Html.T("Common.Edit")</a>
+        }
+        <a class="btn btn-outline-secondary" asp-action="Index">← @Html.T("Common.Back")</a>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header">@Html.T("Production.OrderInfo")</div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4 text-muted">@Html.T("Production.Product")</dt><dd class="col-sm-8">@Model.Product?.Name</dd>
+                    <dt class="col-sm-4 text-muted">@Html.T("Production.Department")</dt><dd class="col-sm-8">@if (Model.Department != null) { <span class="badge bg-light text-dark border">@Model.Department.Code</span> <span class="ms-1">@Model.Department.Name</span> } else { <span class="text-muted">@Html.T("Common.NotAssigned")</span> }</dd>
+                    <dt class="col-sm-4 text-muted">@Html.T("Production.Quantity")</dt><dd class="col-sm-8 fw-semibold">@Model.Quantity.ToString("N0")</dd>
+                    <dt class="col-sm-4 text-muted">@Html.T("Production.StartDate")</dt><dd class="col-sm-8">@Model.StartDate.ToString("dd MMM yyyy")</dd>
+                    <dt class="col-sm-4 text-muted">@Html.T("Production.EndDate")</dt><dd class="col-sm-8">@(Model.EndDate?.ToString("dd MMM yyyy") ?? "—")</dd>
+                    <dt class="col-sm-4 text-muted">@Html.T("Common.Notes")</dt><dd class="col-sm-8">@Model.Notes</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header">@Html.T("Production.CostBreakdown")</div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between py-2 border-bottom"><span class="text-primary">@Html.T("Dashboard.MaterialCost")</span><span class="fw-semibold">@Model.TotalMaterialCost.ToString("N0") VND</span></div>
+                <div class="d-flex justify-content-between py-2 border-bottom"><span class="text-info">@Html.T("Dashboard.LaborCost")</span><span class="fw-semibold">@Model.TotalLaborCost.ToString("N0") VND</span></div>
+                <div class="d-flex justify-content-between py-2 border-bottom"><span class="text-warning">@Html.T("Dashboard.OverheadCost")</span><span class="fw-semibold">@Model.TotalOverheadCost.ToString("N0") VND</span></div>
+                <div class="d-flex justify-content-between py-3 mt-1" style="background:#0f172a;color:#fff;padding-left:12px;padding-right:12px;border-radius:8px;"><span>@Html.T("Common.Total").ToUpper()</span><span class="fw-bold">@Model.TotalCost.ToString("N0") VND</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <div>@Html.T("Production.LaborEntries")</div>
+                    <small class="text-muted fw-normal">@Model.LaborCosts.Count @Html.T("Production.Entries")</small>
+                </div>
+                @if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Accountant"))
+                {
+                    <a class="btn btn-sm btn-primary" asp-action="AddLabor" asp-route-orderId="@Model.Id">+ @Html.T("Common.Add")</a>
+                }
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead><tr><th>@Html.T("Production.Worker")</th><th>@Html.T("Production.Dept")</th><th class="text-end">@Html.T("Production.Hours")</th><th class="text-end">@Html.T("Production.Rate")</th><th class="text-end">@Html.T("Common.Total")</th><th class="pe-4">@Html.T("Common.Date")</th></tr></thead>
+                    <tbody>
+                    @foreach (var l in Model.LaborCosts)
+                    {
+                        <tr><td>@l.WorkerName</td><td><small><code class="text-primary">@(l.Department?.Code ?? "-")</code></small></td><td class="text-end">@l.HoursWorked</td><td class="text-end">@l.HourlyRate.ToString("N0")</td><td class="text-end fw-semibold">@l.CalculateTotal().ToString("N0")</td><td class="pe-4"><small>@l.IncurredAt.ToString("dd MMM")</small></td></tr>
+                    }
+                    @if (!Model.LaborCosts.Any())
+                    {
+                        <tr><td colspan="6" class="text-center text-muted py-3">@Html.T("Common.NoData")</td></tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <div>@Html.T("Production.OverheadEntries")</div>
+                    <small class="text-muted fw-normal">@Model.OverheadCosts.Count @Html.T("Production.Entries")</small>
+                </div>
+                @if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Accountant"))
+                {
+                    <a class="btn btn-sm btn-primary" asp-action="AddOverhead" asp-route-orderId="@Model.Id">+ @Html.T("Common.Add")</a>
+                }
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead><tr><th>@Html.T("Production.Type")</th><th>@Html.T("Production.Dept")</th><th>@Html.T("Products.Category")</th><th class="text-end">@Html.T("Production.Amount")</th><th class="pe-4">@Html.T("Common.Date")</th></tr></thead>
+                    <tbody>
+                    @foreach (var o in Model.OverheadCosts)
+                    {
+                        <tr><td>@o.Type</td><td><small><code class="text-primary">@(o.Department?.Code ?? "-")</code></small></td><td><small class="text-muted">@o.Category</small></td><td class="text-end fw-semibold">@o.Amount.ToString("N0")</td><td class="pe-4"><small>@o.IncurredAt.ToString("dd MMM")</small></td></tr>
+                    }
+                    @if (!Model.OverheadCosts.Any())
+                    {
+                        <tr><td colspan="5" class="text-center text-muted py-3">@Html.T("Common.NoData")</td></tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

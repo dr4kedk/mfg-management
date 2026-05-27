@@ -1,0 +1,420 @@
+@model DashboardStatsDto
+@{
+    ViewData["Title"] = Html.T("Dashboard.Title");
+    var jsonOpts = new System.Text.Json.JsonSerializerOptions
+    {
+        PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase,
+        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+    };
+    var monthlyJson = System.Text.Json.JsonSerializer.Serialize(Model.MonthlyCosts, jsonOpts);
+    var topJson = System.Text.Json.JsonSerializer.Serialize(Model.TopCostProducts, jsonOpts);
+    var labelsJson = System.Text.Json.JsonSerializer.Serialize(new
+    {
+        material = AppText.Get("Dashboard.MaterialCost"),
+        labor = AppText.Get("Dashboard.LaborCost"),
+        overhead = AppText.Get("Dashboard.OverheadCost"),
+        pending = AppText.Get("Common.Pending"),
+        inProgress = AppText.Get("Common.InProgress"),
+        completed = AppText.Get("Common.Completed"),
+        total = AppText.Get("Common.Total"),
+        totalOrders = AppText.Get("Common.Total"),
+        orders = AppText.Get("Dashboard.OrdersCol").ToLower(),
+        vnd = "VND"
+    }, jsonOpts);
+}
+
+<div class="page-header">
+    <div>
+        <h2>@Html.T("Dashboard.Title")</h2>
+        <div class="subtitle">@Html.T("Dashboard.Subtitle")</div>
+    </div>
+    <small class="text-muted">@Html.T("Dashboard.AsOf") @DateTime.Now.ToString("dd MMM yyyy HH:mm")</small>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card h-100 kpi-card">
+            <div class="card-body">
+                <div class="stat-label">@Html.T("Dashboard.Products")</div>
+                <h3 class="mb-0 mt-1">@Model.TotalProducts</h3>
+                <small class="text-muted">@Html.T("Dashboard.ProductsSub")</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 kpi-card">
+            <div class="card-body">
+                <div class="stat-label">@Html.T("Dashboard.Materials")</div>
+                <h3 class="mb-0 mt-1">@Model.TotalMaterials</h3>
+                <small class="@(Model.LowStockMaterials > 0 ? "text-danger" : "text-success") fw-semibold">@Html.T("Dashboard.LowStockCount", Model.LowStockMaterials)</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 kpi-card">
+            <div class="card-body">
+                <div class="stat-label">@Html.T("Dashboard.Suppliers")</div>
+                <h3 class="mb-0 mt-1">@Model.TotalSuppliers</h3>
+                <small class="text-muted">@Html.T("Dashboard.SuppliersSub")</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 kpi-card">
+            <div class="card-body">
+                <div class="stat-label">@Html.T("Dashboard.ProductionOrders")</div>
+                <h3 class="mb-0 mt-1">@Model.TotalProductionOrders</h3>
+                <small class="text-muted">@Html.T("Dashboard.InProgressCount", Model.InProgressOrders)</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card h-100 cost-card" style="border-left: 4px solid #2563eb;">
+            <div class="card-body d-flex flex-column">
+                <div class="stat-label">@Html.T("Dashboard.MaterialCost")</div>
+                <h5 class="mb-0 mt-2 text-primary">@Model.TotalMaterialCost.ToString("N0") <small class="text-muted fs-6">VND</small></h5>
+                <div class="mt-auto pt-3">
+                    <small class="text-muted">@(Model.TotalCost > 0 ? (Model.TotalMaterialCost / Model.TotalCost * 100).ToString("F1") : "0")@Html.T("Dashboard.OfTotal")</small>
+                    <div class="progress mt-1" style="height:4px;"><div class="progress-bar bg-primary" style="width:@(Model.TotalCost > 0 ? (Model.TotalMaterialCost / Model.TotalCost * 100).ToString("F0") : "0")%"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 cost-card" style="border-left: 4px solid #0dcaf0;">
+            <div class="card-body d-flex flex-column">
+                <div class="stat-label">@Html.T("Dashboard.LaborCost")</div>
+                <h5 class="mb-0 mt-2 text-info">@Model.TotalLaborCost.ToString("N0") <small class="text-muted fs-6">VND</small></h5>
+                <div class="mt-auto pt-3">
+                    <small class="text-muted">@(Model.TotalCost > 0 ? (Model.TotalLaborCost / Model.TotalCost * 100).ToString("F1") : "0")@Html.T("Dashboard.OfTotal")</small>
+                    <div class="progress mt-1" style="height:4px;"><div class="progress-bar bg-info" style="width:@(Model.TotalCost > 0 ? (Model.TotalLaborCost / Model.TotalCost * 100).ToString("F0") : "0")%"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 cost-card" style="border-left: 4px solid #f59e0b;">
+            <div class="card-body d-flex flex-column">
+                <div class="stat-label">@Html.T("Dashboard.OverheadCost")</div>
+                <h5 class="mb-0 mt-2 text-warning">@Model.TotalOverheadCost.ToString("N0") <small class="text-muted fs-6">VND</small></h5>
+                <div class="mt-auto pt-3">
+                    <small class="text-muted">@(Model.TotalCost > 0 ? (Model.TotalOverheadCost / Model.TotalCost * 100).ToString("F1") : "0")@Html.T("Dashboard.OfTotal")</small>
+                    <div class="progress mt-1" style="height:4px;"><div class="progress-bar bg-warning" style="width:@(Model.TotalCost > 0 ? (Model.TotalOverheadCost / Model.TotalCost * 100).ToString("F0") : "0")%"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 cost-card bg-dark text-white border-0">
+            <div class="card-body d-flex flex-column">
+                <div class="stat-label text-white-50">@Html.T("Dashboard.TotalCost")</div>
+                <h5 class="mb-0 mt-2">@Model.TotalCost.ToString("N0") <small class="text-white-50 fs-6">VND</small></h5>
+                <div class="mt-auto pt-3">
+                    <small class="text-white-50">@Html.T("Dashboard.Baseline")</small>
+                    <div class="progress mt-1" style="height:4px;background:rgba(255,255,255,.18);"><div class="progress-bar bg-white" style="width:100%"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-8">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <div>@Html.T("Dashboard.MonthlyChartTitle")</div>
+                    <small class="text-muted fw-normal">@Html.T("Dashboard.MonthlyChartSub")</small>
+                </div>
+                <div class="d-flex gap-3 small text-muted">
+                    <span><span class="d-inline-block rounded-circle" style="width:9px;height:9px;background:#2563eb;"></span> @Html.T("Dashboard.MaterialCost")</span>
+                    <span><span class="d-inline-block rounded-circle" style="width:9px;height:9px;background:#0dcaf0;"></span> @Html.T("Dashboard.LaborCost")</span>
+                    <span><span class="d-inline-block rounded-circle" style="width:9px;height:9px;background:#f59e0b;"></span> @Html.T("Dashboard.OverheadCost")</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div style="position:relative;height:320px;"><canvas id="monthlyChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <div>@Html.T("Dashboard.TopProductsTitle")</div>
+                <small class="text-muted fw-normal">@Html.T("Dashboard.TopProductsSub")</small>
+            </div>
+            <div class="card-body">
+                <div style="position:relative;height:320px;"><canvas id="topProductsChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <div>@Html.T("Dashboard.StatusTitle")</div>
+                <small class="text-muted fw-normal">@Html.T("Dashboard.StatusSub", Model.TotalProductionOrders)</small>
+            </div>
+            <div class="card-body">
+                <div style="position:relative;height:280px;"><canvas id="statusChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>@Html.T("Dashboard.TopDetailsTitle")</div>
+                <a class="btn btn-sm btn-outline-primary" asp-action="CostBreakdown">@Html.T("Dashboard.FullAnalysis")</a>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead><tr><th>@Html.T("Dashboard.Product")</th><th class="text-end">@Html.T("Dashboard.OrdersCol")</th><th class="text-end">@Html.T("Dashboard.TotalCostCol")</th></tr></thead>
+                    <tbody>
+                    @foreach (var t in Model.TopCostProducts)
+                    {
+                        <tr>
+                            <td>@t.ProductName</td>
+                            <td class="text-end">@t.OrderCount</td>
+                            <td class="text-end fw-semibold">@t.TotalCost.ToString("N0")</td>
+                        </tr>
+                    }
+                    @if (!Model.TopCostProducts.Any())
+                    {
+                        <tr><td colspan="3" class="text-center text-muted p-4">@Html.T("Common.NoData")</td></tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    const monthly = @Html.Raw(monthlyJson);
+    const topProducts = @Html.Raw(topJson);
+    const statusCounts = {
+        Pending: @Model.PendingOrders,
+        InProgress: @Model.InProgressOrders,
+        Completed: @Model.CompletedOrders
+    };
+    const totalOrders = statusCounts.Pending + statusCounts.InProgress + statusCounts.Completed;
+    const totalTopCost = topProducts.reduce((s, t) => s + t.totalCost, 0);
+    const labels = @Html.Raw(labelsJson);
+
+    Chart.defaults.font.family = "system-ui, -apple-system, 'Segoe UI', sans-serif";
+    Chart.defaults.font.size = 12;
+    Chart.defaults.color = '#475569';
+    Chart.defaults.borderColor = '#eef2f7';
+
+    function fmtCompact(v) {
+        if (v >= 1e9) return (v/1e9).toFixed(1) + 'B';
+        if (v >= 1e6) return (v/1e6).toFixed(0) + 'M';
+        if (v >= 1e3) return (v/1e3).toFixed(0) + 'K';
+        return v.toString();
+    }
+
+    const tooltipStyle = {
+        backgroundColor: 'rgba(15,23,42,.95)',
+        titleColor: '#fff',
+        bodyColor: '#e2e8f0',
+        borderColor: 'rgba(255,255,255,.08)',
+        borderWidth: 1,
+        padding: 10,
+        cornerRadius: 8,
+        boxPadding: 6,
+        titleFont: { weight: '600', size: 12 },
+        bodyFont: { size: 12 },
+        footerFont: { weight: '600', size: 12 },
+        footerColor: '#fff',
+        footerMarginTop: 6
+    };
+
+    // Center-text plugin for doughnuts (hides when a tooltip is visible)
+    const centerTextPlugin = {
+        id: 'centerText',
+        afterDraw(chart) {
+            const opt = chart.config.options.plugins && chart.config.options.plugins.centerText;
+            if (!opt) return;
+            // Skip rendering while a tooltip is showing so it doesn't overlap
+            if (chart.tooltip && chart.tooltip.opacity > 0) return;
+            const { ctx, chartArea } = chart;
+            if (!chartArea) return;
+            const cx = (chartArea.left + chartArea.right) / 2;
+            const cy = (chartArea.top + chartArea.bottom) / 2;
+            ctx.save();
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '600 11px system-ui';
+            ctx.fillText(String(opt.label).toUpperCase(), cx, cy - 14);
+            ctx.fillStyle = '#0f172a';
+            ctx.font = '700 22px system-ui';
+            ctx.fillText(String(opt.value), cx, cy + 6);
+            if (opt.sub) {
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = '500 11px system-ui';
+                ctx.fillText(String(opt.sub), cx, cy + 24);
+            }
+            ctx.restore();
+        }
+    };
+    Chart.register(centerTextPlugin);
+
+    // === Monthly stacked bar ===
+    new Chart(document.getElementById('monthlyChart'), {
+        type: 'bar',
+        data: {
+            labels: monthly.map(m => m.month),
+            datasets: [
+                {
+                    label: labels.material,
+                    data: monthly.map(m => m.materialCost),
+                    backgroundColor: '#3b82f6',
+                    hoverBackgroundColor: '#1d4ed8',
+                    borderRadius: 4,
+                    borderSkipped: false,
+                    barPercentage: 0.65,
+                    categoryPercentage: 0.8
+                },
+                {
+                    label: labels.labor,
+                    data: monthly.map(m => m.laborCost),
+                    backgroundColor: '#22d3ee',
+                    hoverBackgroundColor: '#0891b2',
+                    borderRadius: 4,
+                    borderSkipped: false,
+                    barPercentage: 0.65,
+                    categoryPercentage: 0.8
+                },
+                {
+                    label: labels.overhead,
+                    data: monthly.map(m => m.overheadCost),
+                    backgroundColor: '#fbbf24',
+                    hoverBackgroundColor: '#d97706',
+                    borderRadius: 4,
+                    borderSkipped: false,
+                    barPercentage: 0.65,
+                    categoryPercentage: 0.8
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            animation: { duration: 700, easing: 'easeOutQuart' },
+            plugins: {
+                legend: { display: false },
+                tooltip: Object.assign({}, tooltipStyle, {
+                    callbacks: {
+                        label: ctx => '  ' + ctx.dataset.label + ': ' + ctx.parsed.y.toLocaleString() + ' VND',
+                        footer: items => {
+                            const sum = items.reduce((s, i) => s + i.parsed.y, 0);
+                            return labels.total + ': ' + sum.toLocaleString() + ' VND';
+                        }
+                    }
+                })
+            },
+            scales: {
+                x: {
+                    stacked: true,
+                    grid: { display: false },
+                    ticks: { font: { weight: '500' } }
+                },
+                y: {
+                    stacked: true,
+                    ticks: { callback: fmtCompact, padding: 8 },
+                    grid: { color: '#eef2f7', drawTicks: false }
+                }
+            }
+        }
+    });
+
+    // === Top products doughnut ===
+    const productColors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+    new Chart(document.getElementById('topProductsChart'), {
+        type: 'doughnut',
+        data: {
+            labels: topProducts.map(t => t.productName),
+            datasets: [{
+                data: topProducts.map(t => t.totalCost),
+                backgroundColor: productColors,
+                borderColor: '#fff',
+                borderWidth: 2,
+                hoverOffset: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '66%',
+            animation: { animateRotate: true, duration: 900, easing: 'easeOutQuart' },
+            plugins: {
+                centerText: { label: labels.total, value: fmtCompact(totalTopCost), sub: 'VND' },
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        boxWidth: 8, boxHeight: 8, padding: 10,
+                        usePointStyle: true, pointStyle: 'circle',
+                        font: { size: 11.5 }
+                    }
+                },
+                tooltip: Object.assign({}, tooltipStyle, {
+                    callbacks: {
+                        label: ctx => {
+                            const pct = totalTopCost > 0 ? ((ctx.parsed / totalTopCost) * 100).toFixed(1) : 0;
+                            return '  ' + ctx.parsed.toLocaleString() + ' VND (' + pct + '%)';
+                        }
+                    }
+                })
+            }
+        }
+    });
+
+    // === Status doughnut ===
+    new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: [labels.pending, labels.inProgress, labels.completed],
+            datasets: [{
+                data: [statusCounts.Pending, statusCounts.InProgress, statusCounts.Completed],
+                backgroundColor: ['#cbd5e1', '#22d3ee', '#10b981'],
+                borderColor: '#fff',
+                borderWidth: 2,
+                hoverOffset: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '68%',
+            animation: { animateRotate: true, duration: 900, easing: 'easeOutQuart' },
+            plugins: {
+                centerText: { label: labels.total, value: String(totalOrders), sub: labels.orders },
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        boxWidth: 8, boxHeight: 8, padding: 10,
+                        usePointStyle: true, pointStyle: 'circle',
+                        font: { size: 12 }
+                    }
+                },
+                tooltip: Object.assign({}, tooltipStyle, {
+                    callbacks: {
+                        label: ctx => {
+                            const pct = totalOrders > 0 ? ((ctx.parsed / totalOrders) * 100).toFixed(1) : 0;
+                            return '  ' + ctx.parsed + ' (' + pct + '%)';
+                        }
+                    }
+                })
+            }
+        }
+    });
+</script>
+}

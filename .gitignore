@@ -1,0 +1,79 @@
+# .NET build artifacts
+bin/
+obj/
+out/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+.vscode/
+.idea/
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+
+# Visual Studio cache/options directory
+.vs/
+.vscode/
+
+# Rider
+.idea/
+
+# Test/coverage results
+TestResults/
+[Cc]overage*.json
+[Cc]overage*.xml
+[Cc]overage*.info
+*.coverage
+*.coveragexml
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# ASP.NET Core secrets
+**/appsettings.*.Local.json
+**/secrets.json
+**/.aspnet/
+**/wwwroot/lib/**/.gitkeep
+
+# Logs
+*.log
+logs/
+
+# Migrations build cache
+**/Migrations/**/*.user
+
+# Local SQLite databases
+*.db
+*.db-shm
+*.db-wal
+
+# Docker volumes (mounted via compose only — data shouldn't be committed)
+mssql-data/
+
+# Local tooling
+.dotnet/
+node_modules/

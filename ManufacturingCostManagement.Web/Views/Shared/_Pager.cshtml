@@ -1,0 +1,43 @@
+@model dynamic
+@{
+    int currentPage = Model.Page;
+    int totalPages = Model.TotalPages;
+    // Preserve every current query string param except 'page'
+    string BuildHref(int p)
+    {
+        var qs = new List<string>();
+        foreach (var kv in Context.Request.Query)
+        {
+            if (string.Equals(kv.Key, "page", StringComparison.OrdinalIgnoreCase)) continue;
+            foreach (var v in kv.Value)
+            {
+                if (!string.IsNullOrEmpty(v))
+                    qs.Add($"{Uri.EscapeDataString(kv.Key)}={Uri.EscapeDataString(v)}");
+            }
+        }
+        qs.Add($"page={p}");
+        return "?" + string.Join("&", qs);
+    }
+}
+@if (totalPages > 1)
+{
+    <nav class="d-flex justify-content-between align-items-center mt-3 px-3 pb-3">
+        <small class="text-muted">@Html.T("Common.Page") <strong>@currentPage</strong> @Html.T("Common.Of") <strong>@totalPages</strong> — @Model.TotalCount @Html.T("Common.TotalRecords")</small>
+        <ul class="pagination mb-0">
+            @if (currentPage > 1)
+            {
+                <li class="page-item"><a class="page-link" href="@BuildHref(currentPage - 1)">‹ @Html.T("Common.Back")</a></li>
+            }
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    <a class="page-link" href="@BuildHref(i)">@i</a>
+                </li>
+            }
+            @if (currentPage < totalPages)
+            {
+                <li class="page-item"><a class="page-link" href="@BuildHref(currentPage + 1)">›</a></li>
+            }
+        </ul>
+    </nav>
+}

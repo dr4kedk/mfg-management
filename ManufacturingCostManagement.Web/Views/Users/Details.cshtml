@@ -1,0 +1,41 @@
+@model User
+@{ ViewData["Title"] = Model.Username; }
+<div class="page-header">
+    <div><h2>@Model.Username</h2><div class="subtitle">@Html.T("Users.AccountInfo")</div></div>
+    <div>
+        <a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@Model.Id"><i class="bi bi-pencil-square"></i> @Html.T("Common.Edit")</a>
+        <a class="btn btn-outline-secondary" asp-action="Index">← @Html.T("Common.Back")</a>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-7">
+        <div class="card h-100">
+            <div class="card-header">@Html.T("Users.AccountInfo")</div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4 text-muted">@Html.T("Users.FullName")</dt><dd class="col-sm-8">@Model.FullName</dd>
+                    <dt class="col-sm-4 text-muted">@Html.T("Users.Email")</dt><dd class="col-sm-8">@Model.Email</dd>
+                    <dt class="col-sm-4 text-muted">@Html.T("Users.Role")</dt><dd class="col-sm-8"><span class="badge bg-primary-subtle text-primary-emphasis">@Model.Role?.Name</span></dd>
+                    <dt class="col-sm-4 text-muted">@Html.T("Common.Status")</dt><dd class="col-sm-8">@if (Model.IsActive) { <span class="badge bg-success-subtle text-success-emphasis">@Html.T("Common.Active")</span> } else { <span class="badge bg-secondary-subtle text-secondary-emphasis">@Html.T("Common.Inactive")</span> }</dd>
+                    <dt class="col-sm-4 text-muted">@Html.T("Suppliers.Registered")</dt><dd class="col-sm-8">@Model.CreatedAt.ToString("dd MMM yyyy")</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="card h-100">
+            <div class="card-header">@Html.T("Users.ResetPassword")</div>
+            <div class="card-body">
+                <form asp-action="ResetPassword" asp-route-id="@Model.Id" method="post">
+                    @Html.AntiForgeryToken()
+                    <label class="form-label">@Html.T("Users.NewPasswordPlaceholder")</label>
+                    <div class="input-group">
+                        <input type="password" name="newPassword" class="form-control" placeholder="••••••••" />
+                        <button class="btn btn-warning" onclick="return confirm('@Html.T("Users.ResetPassword")?')">@Html.T("Common.Reset")</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,8 @@
+@{ var query = ViewBag.Query as string; }
+<form method="get" class="d-flex" style="max-width:380px;">
+    <div class="input-group">
+        <span class="input-group-text bg-white border-end-0">🔍</span>
+        <input type="text" name="q" value="@query" class="form-control border-start-0" placeholder="@Html.T("Common.Search")..." />
+        <button type="submit" class="btn btn-primary">@Html.T("Common.Search")</button>
+    </div>
+</form>

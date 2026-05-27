@@ -1,0 +1,112 @@
+@model PagedResult<ProductionOrder>
+@{
+    ViewData["Title"] = Html.T("Production.Title");
+    string StatusKey(ProductionStatus s) => s switch {
+        ProductionStatus.Pending => "Common.Pending",
+        ProductionStatus.InProgress => "Common.InProgress",
+        ProductionStatus.Completed => "Common.Completed",
+        ProductionStatus.Cancelled => "Common.Cancelled",
+        _ => "Common.Pending"
+    };
+}
+<div class="page-header">
+    <div><h2>@Html.T("Production.Title")</h2><div class="subtitle">@Html.T("Production.Subtitle")</div></div>
+    @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+    {
+        <a class="btn btn-primary" asp-action="Create">@Html.T("Production.NewBtn")</a>
+    }
+</div>
+<div class="card">
+    <div class="card-header bg-white">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label">@Html.T("Common.Search")</label>
+                <input type="text" name="q" value="@ViewBag.Query" class="form-control" placeholder="@Html.T("Production.OrderCode")" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">@Html.T("Common.Status")</label>
+                <select name="status" class="form-select">
+                    <option value="">@Html.T("Common.AllOption")</option>
+                    @foreach (var s in Enum.GetValues<ProductionStatus>())
+                    {
+                        var k = s switch {
+                            ProductionStatus.Pending => "Common.Pending",
+                            ProductionStatus.InProgress => "Common.InProgress",
+                            ProductionStatus.Completed => "Common.Completed",
+                            ProductionStatus.Cancelled => "Common.Cancelled",
+                            _ => "Common.Pending"
+                        };
+                        var selected = (ProductionStatus?)ViewBag.Status == s ? "selected" : "";
+                        <option value="@((int)s)" selected="@(selected == "selected")">@Html.T(k)</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">@Html.T("Production.Department")</label>
+                <select name="departmentId" asp-items="ViewBag.Departments" class="form-select">
+                    <option value="">@Html.T("Common.AllOption")</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">@Html.T("Production.Product")</label>
+                <select name="productId" asp-items="ViewBag.Products" class="form-select">
+                    <option value="">@Html.T("Common.AllOption")</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button class="btn btn-primary"><i class="bi bi-funnel"></i> @Html.T("Common.Filter")</button>
+                <a class="btn btn-outline-secondary" asp-action="Index">@Html.T("Common.ClearFilters")</a>
+            </div>
+        </form>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>@Html.T("Production.OrderCode")</th>
+                    <th>@Html.T("Production.Product")</th>
+                    <th>@Html.T("Production.Department")</th>
+                    <th class="text-end">@Html.T("Production.Quantity")</th>
+                    <th>@Html.T("Common.Status")</th>
+                    <th>@Html.T("Production.StartDate")</th>
+                    <th class="text-end">@Html.T("Dashboard.TotalCostCol")</th>
+                    <th class="text-end pe-4">@Html.T("Common.Actions")</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var o in Model.Items)
+            {
+                var (statusClass, statusIcon) = o.Status switch
+                {
+                    ProductionStatus.Pending => ("secondary-subtle text-secondary-emphasis", "⏳"),
+                    ProductionStatus.InProgress => ("info-subtle text-info-emphasis", "🔄"),
+                    ProductionStatus.Completed => ("success-subtle text-success-emphasis", "✓"),
+                    ProductionStatus.Cancelled => ("danger-subtle text-danger-emphasis", "✕"),
+                    _ => ("secondary-subtle text-secondary-emphasis", "")
+                };
+                <tr>
+                    <td><code class="text-primary">@o.OrderCode</code></td>
+                    <td class="fw-semibold">@o.Product?.Name</td>
+                    <td>@if (o.Department != null) { <span class="badge bg-light text-dark border">@o.Department.Code</span> } else { <span class="text-muted">—</span> }</td>
+                    <td class="text-end">@o.Quantity.ToString("N0")</td>
+                    <td><span class="badge bg-@statusClass">@statusIcon @Html.T(StatusKey(o.Status))</span></td>
+                    <td><small>@o.StartDate.ToString("dd MMM yyyy")</small></td>
+                    <td class="text-end fw-semibold">@o.TotalCost.ToString("N0")</td>
+                    <td class="text-end pe-4">
+                        <a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-route-id="@o.Id"><i class="bi bi-eye"></i> @Html.T("Common.View")</a>
+                        @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                        {
+                            <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@o.Id"><i class="bi bi-pencil-square"></i> @Html.T("Common.Edit")</a>
+                        }
+                    </td>
+                </tr>
+            }
+            @if (!Model.Items.Any())
+            {
+                <tr><td colspan="8" class="text-center text-muted py-4">@Html.T("Common.NoData")</td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    <partial name="_Pager" model="Model" />
+</div>

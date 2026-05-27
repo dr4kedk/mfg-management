@@ -1,0 +1,30 @@
+@model User
+@{ ViewData["Title"] = Model.Username; }
+<div class="page-header">
+    <div><h2>@Html.T("Common.Edit") @Html.T("Users.Title")</h2><div class="subtitle">@Model.Username</div></div>
+    <a class="btn btn-outline-secondary" asp-action="Index">← @Html.T("Common.Back")</a>
+</div>
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Edit" method="post" class="row g-3">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="CreatedAt" />
+            <input type="hidden" asp-for="Username" />
+            <input type="hidden" asp-for="PasswordHash" />
+            <div class="col-md-6"><label class="form-label">@Html.T("Users.Username")</label><input value="@Model.Username" class="form-control" readonly /></div>
+            <div class="col-md-6"><label asp-for="Email" class="form-label">@Html.T("Users.Email")</label><input asp-for="Email" class="form-control" /></div>
+            <div class="col-md-6"><label asp-for="FullName" class="form-label">@Html.T("Users.FullName")</label><input asp-for="FullName" class="form-control" /></div>
+            <div class="col-md-6">
+                <label asp-for="RoleId" class="form-label">@Html.T("Users.Role")</label>
+                <select asp-for="RoleId" asp-items="ViewBag.Roles" class="form-select"></select>
+            </div>
+            <div class="col-12">
+                <div class="form-check form-switch"><input asp-for="IsActive" class="form-check-input" /><label asp-for="IsActive" class="form-check-label">@Html.T("Common.Active")</label></div>
+            </div>
+            <div class="col-12 d-flex gap-2 pt-2">
+                <button class="btn btn-primary">@Html.T("Common.SaveChanges")</button>
+                <a class="btn btn-outline-secondary" asp-action="Index">@Html.T("Common.Cancel")</a>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,74 @@
+@model PagedResult<User>
+@{ ViewData["Title"] = Html.T("Users.Title"); }
+<div class="page-header">
+    <div><h2>@Html.T("Users.Title")</h2><div class="subtitle">@Html.T("Users.Subtitle")</div></div>
+    <a class="btn btn-primary" asp-controller="Account" asp-action="Register">@Html.T("Users.NewBtn")</a>
+</div>
+<div class="card">
+    <div class="card-header bg-white">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label">@Html.T("Common.Search")</label>
+                <input type="text" name="q" value="@ViewBag.Query" class="form-control" placeholder="@Html.T("Users.Username") / @Html.T("Users.FullName") / @Html.T("Users.Email")" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">@Html.T("Users.Role")</label>
+                <select name="roleId" asp-items="ViewBag.Roles" class="form-select">
+                    <option value="">@Html.T("Common.AllOption")</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">@Html.T("Common.Status")</label>
+                <select name="isActive" class="form-select">
+                    <option value="">@Html.T("Common.AllOption")</option>
+                    <option value="true" selected="@(ViewBag.IsActive == true)">@Html.T("Common.Active")</option>
+                    <option value="false" selected="@(ViewBag.IsActive == false)">@Html.T("Common.Inactive")</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button class="btn btn-primary"><i class="bi bi-funnel"></i> @Html.T("Common.Filter")</button>
+                <a class="btn btn-outline-secondary" asp-action="Index">@Html.T("Common.ClearFilters")</a>
+            </div>
+        </form>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead><tr><th>@Html.T("Users.Username")</th><th>@Html.T("Users.FullName")</th><th>@Html.T("Users.Email")</th><th>@Html.T("Users.Role")</th><th>@Html.T("Common.Status")</th><th class="text-end pe-4">@Html.T("Common.Actions")</th></tr></thead>
+            <tbody>
+            @foreach (var u in Model.Items)
+            {
+                <tr>
+                    <td class="fw-semibold">@u.Username</td>
+                    <td>@u.FullName</td>
+                    <td><small class="text-muted">@u.Email</small></td>
+                    <td>
+                        @{
+                            var roleBg = u.Role?.Name switch {
+                                "Admin" => "danger-subtle text-danger-emphasis",
+                                "Manager" => "primary-subtle text-primary-emphasis",
+                                "Accountant" => "warning-subtle text-warning-emphasis",
+                                _ => "secondary-subtle text-secondary-emphasis"
+                            };
+                        }
+                        <span class="badge bg-@roleBg">@u.Role?.Name</span>
+                    </td>
+                    <td>@if (u.IsActive) { <span class="badge bg-success-subtle text-success-emphasis">@Html.T("Common.Active")</span> } else { <span class="badge bg-secondary-subtle text-secondary-emphasis">@Html.T("Common.Inactive")</span> }</td>
+                    <td class="text-end pe-4">
+                        <a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-route-id="@u.Id"><i class="bi bi-eye"></i> @Html.T("Common.View")</a>
+                        <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@u.Id"><i class="bi bi-pencil-square"></i> @Html.T("Common.Edit")</a>
+                        <form asp-action="Delete" asp-route-id="@u.Id" method="post" class="d-inline" onsubmit="return confirm('@Html.T("Common.ConfirmDelete")')">
+                            @Html.AntiForgeryToken()
+                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> @Html.T("Common.Delete")</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            @if (!Model.Items.Any())
+            {
+                <tr><td colspan="6" class="text-center text-muted py-4">@Html.T("Common.NoData")</td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    <partial name="_Pager" model="Model" />
+</div>
