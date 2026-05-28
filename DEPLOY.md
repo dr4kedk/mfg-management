@@ -111,11 +111,11 @@ After=network.target docker.service
 Requires=docker.service
 
 [Service]
-WorkingDirectory=/home/ubuntu/mfg-management
+WorkingDirectory=/home/roxane/mfg-management
 ExecStart=/usr/bin/dotnet run --project ManufacturingCostManagement.Web -c Release --no-launch-profile
 Restart=always
 RestartSec=10
-User=ubuntu
+User=roxane
 Environment=ASPNETCORE_URLS=http://0.0.0.0:5080
 Environment=ASPNETCORE_ENVIRONMENT=Production
 Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
