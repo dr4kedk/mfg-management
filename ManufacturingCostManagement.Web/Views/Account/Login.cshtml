@@ -19,9 +19,17 @@
             margin: 0;
             font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
             background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0f172a 100%);
-            display: flex; align-items: center; justify-content: center;
-            padding: 20px;
+            display: flex; align-items: flex-start; justify-content: center;
+            padding: 40px 20px;
             color: #1f2937;
+        }
+        .page-shell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 28px;
+            width: 100%;
+            max-width: 980px;
         }
         .login-wrapper {
             display: grid;
@@ -31,6 +39,97 @@
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 25px 60px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.05);
+        }
+        .team-panel {
+            width: 100%;
+            background: rgba(255,255,255,.06);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255,255,255,.12);
+            border-radius: 18px;
+            padding: 28px 32px;
+            color: #e5e7eb;
+        }
+        .team-header {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 12px; margin-bottom: 20px; flex-wrap: wrap;
+        }
+        .team-title {
+            display: inline-flex; align-items: center; gap: 10px;
+            font-size: 16px; font-weight: 700; color: #fff; letter-spacing: .01em;
+        }
+        .team-title .badge-icon {
+            width: 30px; height: 30px; border-radius: 8px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 15px;
+            box-shadow: 0 6px 14px rgba(37,99,235,.45);
+        }
+        .team-meta { font-size: 12px; color: rgba(255,255,255,.55); }
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+        }
+        .member-card {
+            background: rgba(255,255,255,.04);
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: 14px;
+            padding: 18px 16px;
+            transition: transform .15s, border-color .15s, background .15s;
+            position: relative;
+            overflow: hidden;
+        }
+        .member-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(96,165,250,.45);
+            background: rgba(255,255,255,.07);
+        }
+        .member-card.lead {
+            background: linear-gradient(160deg, rgba(37,99,235,.22), rgba(15,23,42,.25));
+            border-color: rgba(96,165,250,.4);
+        }
+        .member-head {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+        }
+        .avatar {
+            width: 38px; height: 38px; border-radius: 50%;
+            background: linear-gradient(135deg, #60a5fa, #2563eb);
+            color: #fff; font-weight: 700; font-size: 14px;
+            display: inline-flex; align-items: center; justify-content: center;
+            border: 2px solid rgba(255,255,255,.2);
+            flex-shrink: 0;
+        }
+        .member-card.lead .avatar {
+            background: linear-gradient(135deg, #fbbf24, #d97706);
+            border-color: rgba(251,191,36,.45);
+            box-shadow: 0 0 0 4px rgba(251,191,36,.12);
+        }
+        .member-name { font-size: 14px; font-weight: 600; color: #fff; line-height: 1.25; }
+        .member-stt { font-size: 11px; color: rgba(255,255,255,.55); margin-top: 2px; }
+        .role-tag {
+            display: inline-block;
+            font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
+            padding: 3px 8px; border-radius: 999px;
+            background: rgba(96,165,250,.18); color: #bfdbfe;
+            margin-bottom: 10px;
+        }
+        .member-card.lead .role-tag {
+            background: rgba(251,191,36,.18); color: #fde68a;
+        }
+        .task-list { list-style: none; padding: 0; margin: 0; }
+        .task-list li {
+            font-size: 12px; color: rgba(255,255,255,.78);
+            padding: 4px 0 4px 16px; position: relative; line-height: 1.4;
+        }
+        .task-list li::before {
+            content: '▸'; position: absolute; left: 0; top: 4px;
+            color: #60a5fa; font-size: 11px;
+        }
+        .member-card.lead .task-list li::before { color: #fbbf24; }
+        @@media (max-width: 768px) {
+            .team-grid { grid-template-columns: 1fr; }
+            .team-panel { padding: 22px 20px; }
         }
         .brand-panel {
             background: linear-gradient(160deg, #1e40af 0%, #0c1f4e 100%);
@@ -97,6 +196,7 @@
     </style>
 </head>
 <body>
+    <div class="page-shell">
     <div class="login-wrapper">
         <div class="brand-panel">
             <div class="lang-toggle">
@@ -145,6 +245,69 @@
                 <button type="submit" class="btn btn-primary w-100">@Html.T("Login.SignInBtn") →</button>
             </form>
         </div>
+    </div>
+
+    <section class="team-panel" aria-labelledby="team-title">
+        <div class="team-header">
+            <div class="team-title" id="team-title">
+                <span class="badge-icon">👥</span>
+                @Html.T("Team.Title")
+            </div>
+            <span class="team-meta">@Html.T("Team.Meta")</span>
+        </div>
+        <div class="team-grid">
+            <article class="member-card">
+                <div class="member-head">
+                    <div class="avatar">NP</div>
+                    <div>
+                        <div class="member-name">@Html.T("Team.Phuong.Name")</div>
+                        <div class="member-stt">@Html.T("Team.SttLabel") 20</div>
+                    </div>
+                </div>
+                <span class="role-tag">@Html.T("Team.Role.Research")</span>
+                <ul class="task-list">
+                    <li>@Html.T("Team.Phuong.Task1")</li>
+                    <li>@Html.T("Team.Phuong.Task2")</li>
+                    <li>@Html.T("Team.Phuong.Task3")</li>
+                    <li>@Html.T("Team.Phuong.Task4")</li>
+                </ul>
+            </article>
+
+            <article class="member-card">
+                <div class="member-head">
+                    <div class="avatar">NL</div>
+                    <div>
+                        <div class="member-name">@Html.T("Team.Ly.Name")</div>
+                        <div class="member-stt">@Html.T("Team.SttLabel") 39</div>
+                    </div>
+                </div>
+                <span class="role-tag">@Html.T("Team.Role.Design")</span>
+                <ul class="task-list">
+                    <li>@Html.T("Team.Ly.Task1")</li>
+                    <li>@Html.T("Team.Ly.Task2")</li>
+                    <li>@Html.T("Team.Ly.Task3")</li>
+                    <li>@Html.T("Team.Ly.Task4")</li>
+                </ul>
+            </article>
+
+            <article class="member-card lead">
+                <div class="member-head">
+                    <div class="avatar">NH</div>
+                    <div>
+                        <div class="member-name">@Html.T("Team.Huyen.Name")</div>
+                        <div class="member-stt">@Html.T("Team.SttLabel") 51 · @Html.T("Team.LeadSuffix")</div>
+                    </div>
+                </div>
+                <span class="role-tag">@Html.T("Team.Role.Lead")</span>
+                <ul class="task-list">
+                    <li>@Html.T("Team.Huyen.Task1")</li>
+                    <li>@Html.T("Team.Huyen.Task2")</li>
+                    <li>@Html.T("Team.Huyen.Task3")</li>
+                    <li>@Html.T("Team.Huyen.Task4")</li>
+                </ul>
+            </article>
+        </div>
+    </section>
     </div>
 </body>
 </html>

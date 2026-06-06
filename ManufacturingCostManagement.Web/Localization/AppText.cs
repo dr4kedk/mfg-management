@@ -94,6 +94,33 @@ namespace ManufacturingCostManagement.Web.Localization
                 ["Login.SignInBtn"] = "Sign in",
                 ["Login.InvalidCredentials"] = "Invalid username or password",
 
+                // ---- Login Team Section ----
+                ["Team.Title"] = "Project Team — Manufacturing Cost Management",
+                ["Team.Meta"] = "Project team members",
+                ["Team.SttLabel"] = "No.",
+                ["Team.LeadSuffix"] = "Lead Developer",
+                ["Team.Role.Research"] = "Research & Analysis",
+                ["Team.Role.Design"] = "Design & Data Storage",
+                ["Team.Role.Lead"] = "★ Implementation Lead",
+
+                ["Team.Phuong.Name"] = "Nguyễn Ngọc Hà Phương",
+                ["Team.Phuong.Task1"] = "Survey production cost calculation processes",
+                ["Team.Phuong.Task2"] = "Analyze business requirements & user stories",
+                ["Team.Phuong.Task3"] = "Research material, labor & overhead cost formulas",
+                ["Team.Phuong.Task4"] = "Write analysis documents & reports",
+
+                ["Team.Ly.Name"] = "Nguyễn Hương Thảo Ly",
+                ["Team.Ly.Task1"] = "Design UI/UX for the main screens",
+                ["Team.Ly.Task2"] = "Design database schema & product storage",
+                ["Team.Ly.Task3"] = "Draw ERD and Data Flow Diagrams (DFD)",
+                ["Team.Ly.Task4"] = "Prepare sample data for testing",
+
+                ["Team.Huyen.Name"] = "Nguyễn Thị Huyền",
+                ["Team.Huyen.Task1"] = "Implement the entire system (BLL, DAL, Web)",
+                ["Team.Huyen.Task2"] = "Build the cost-calculation module & reports",
+                ["Team.Huyen.Task3"] = "Implement auth, permissions & multilingual UI",
+                ["Team.Huyen.Task4"] = "Integrate database, Docker & system deployment",
+
                 // ---- Dashboard ----
                 ["Dashboard.Title"] = "Production Overview",
                 ["Dashboard.Subtitle"] = "Real-time KPIs across material, labor and overhead costs",
@@ -410,6 +437,33 @@ namespace ManufacturingCostManagement.Web.Localization
                 ["Login.RememberMe"] = "Ghi nhớ đăng nhập",
                 ["Login.SignInBtn"] = "Đăng nhập",
                 ["Login.InvalidCredentials"] = "Tên đăng nhập hoặc mật khẩu không đúng",
+
+                // ---- Login Team Section ----
+                ["Team.Title"] = "Nhóm dự án — Quản Lý Chi Phí Sản Xuất",
+                ["Team.Meta"] = "Nhóm thực hiện đồ án",
+                ["Team.SttLabel"] = "STT",
+                ["Team.LeadSuffix"] = "Trưởng nhóm lập trình",
+                ["Team.Role.Research"] = "Nghiên cứu & Phân tích",
+                ["Team.Role.Design"] = "Thiết kế & Lưu trữ dữ liệu",
+                ["Team.Role.Lead"] = "★ Trưởng nhóm triển khai",
+
+                ["Team.Phuong.Name"] = "Nguyễn Ngọc Hà Phương",
+                ["Team.Phuong.Task1"] = "Khảo sát quy trình tính giá thành sản xuất",
+                ["Team.Phuong.Task2"] = "Phân tích yêu cầu nghiệp vụ & user stories",
+                ["Team.Phuong.Task3"] = "Nghiên cứu công thức chi phí NVL, nhân công, SX chung",
+                ["Team.Phuong.Task4"] = "Viết tài liệu phân tích & báo cáo",
+
+                ["Team.Ly.Name"] = "Nguyễn Hương Thảo Ly",
+                ["Team.Ly.Task1"] = "Thiết kế UI/UX cho các màn hình chính",
+                ["Team.Ly.Task2"] = "Thiết kế lược đồ CSDL & product storage",
+                ["Team.Ly.Task3"] = "Vẽ ERD, sơ đồ luồng dữ liệu (DFD)",
+                ["Team.Ly.Task4"] = "Chuẩn bị dữ liệu mẫu cho kiểm thử",
+
+                ["Team.Huyen.Name"] = "Nguyễn Thị Huyền",
+                ["Team.Huyen.Task1"] = "Lập trình toàn bộ hệ thống (BLL, DAL, Web)",
+                ["Team.Huyen.Task2"] = "Xây dựng module tính giá thành & báo cáo",
+                ["Team.Huyen.Task3"] = "Triển khai xác thực, phân quyền, đa ngôn ngữ",
+                ["Team.Huyen.Task4"] = "Tích hợp CSDL, Docker & deploy hệ thống",
 
                 // ---- Dashboard ----
                 ["Dashboard.Title"] = "Tổng quan sản xuất",
