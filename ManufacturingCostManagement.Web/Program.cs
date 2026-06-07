@@ -60,7 +60,7 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     var supportedCultures = AppText.SupportedCultures
         .Select(c => new CultureInfo(c))
         .ToArray();
-    options.DefaultRequestCulture = new RequestCulture("en");
+    options.DefaultRequestCulture = new RequestCulture("vi");
     options.SupportedCultures = supportedCultures;
     options.SupportedUICultures = supportedCultures;
     options.RequestCultureProviders.Insert(0, new CookieRequestCultureProvider());
