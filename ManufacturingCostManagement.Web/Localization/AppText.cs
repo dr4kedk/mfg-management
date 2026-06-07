@@ -121,6 +121,10 @@ namespace ManufacturingCostManagement.Web.Localization
                 ["Team.Huyen.Task3"] = "Implement auth, permissions & multilingual UI",
                 ["Team.Huyen.Task4"] = "Integrate database, Docker & system deployment",
 
+                ["Team.SupervisorLabel"] = "Academic Supervisor",
+                ["Team.SupervisorName"] = "Dr. Hà Văn Sang",
+                ["Team.SupervisorInstitution"] = "Academy of Finance",
+
                 // ---- Dashboard ----
                 ["Dashboard.Title"] = "Production Overview",
                 ["Dashboard.Subtitle"] = "Real-time KPIs across material, labor and overhead costs",
@@ -464,6 +468,10 @@ namespace ManufacturingCostManagement.Web.Localization
                 ["Team.Huyen.Task2"] = "Xây dựng module tính giá thành & báo cáo",
                 ["Team.Huyen.Task3"] = "Triển khai xác thực, phân quyền, đa ngôn ngữ",
                 ["Team.Huyen.Task4"] = "Tích hợp CSDL, Docker & deploy hệ thống",
+
+                ["Team.SupervisorLabel"] = "Giảng viên hướng dẫn",
+                ["Team.SupervisorName"] = "Tiến sĩ Hà Văn Sang",
+                ["Team.SupervisorInstitution"] = "Học viện Tài chính",
 
                 // ---- Dashboard ----
                 ["Dashboard.Title"] = "Tổng quan sản xuất",

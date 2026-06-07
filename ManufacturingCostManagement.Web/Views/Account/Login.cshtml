@@ -127,9 +127,34 @@
             color: #60a5fa; font-size: 11px;
         }
         .member-card.lead .task-list li::before { color: #fbbf24; }
+        .supervisor-card {
+            display: flex; align-items: center; gap: 16px;
+            padding: 16px 18px;
+            margin-bottom: 18px;
+            background: linear-gradient(110deg, rgba(124,58,237,.22), rgba(37,99,235,.18));
+            border: 1px solid rgba(167,139,250,.35);
+            border-radius: 14px;
+            box-shadow: 0 6px 18px rgba(76,29,149,.18);
+        }
+        .supervisor-icon {
+            width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0;
+            background: linear-gradient(135deg, #a78bfa, #6d28d9);
+            color: #fff; font-size: 22px;
+            display: inline-flex; align-items: center; justify-content: center;
+            border: 1px solid rgba(255,255,255,.25);
+            box-shadow: 0 6px 14px rgba(109,40,217,.4);
+        }
+        .supervisor-meta { display: flex; flex-direction: column; min-width: 0; }
+        .supervisor-label {
+            font-size: 11px; font-weight: 700; letter-spacing: .08em;
+            text-transform: uppercase; color: #c4b5fd; margin-bottom: 2px;
+        }
+        .supervisor-name { font-size: 16px; font-weight: 700; color: #fff; line-height: 1.25; }
+        .supervisor-institution { font-size: 12.5px; color: rgba(255,255,255,.7); margin-top: 2px; }
         @@media (max-width: 768px) {
             .team-grid { grid-template-columns: 1fr; }
             .team-panel { padding: 22px 20px; }
+            .supervisor-card { flex-direction: column; align-items: flex-start; text-align: left; }
         }
         .brand-panel {
             background: linear-gradient(160deg, #1e40af 0%, #0c1f4e 100%);
@@ -255,6 +280,16 @@
             </div>
             <span class="team-meta">@Html.T("Team.Meta")</span>
         </div>
+
+        <div class="supervisor-card" role="group" aria-labelledby="supervisor-label">
+            <span class="supervisor-icon" aria-hidden="true">🎓</span>
+            <div class="supervisor-meta">
+                <span class="supervisor-label" id="supervisor-label">@Html.T("Team.SupervisorLabel")</span>
+                <span class="supervisor-name">@Html.T("Team.SupervisorName")</span>
+                <span class="supervisor-institution">@Html.T("Team.SupervisorInstitution")</span>
+            </div>
+        </div>
+
         <div class="team-grid">
             <article class="member-card">
                 <div class="member-head">
