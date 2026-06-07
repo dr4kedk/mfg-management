@@ -63,7 +63,12 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.DefaultRequestCulture = new RequestCulture("vi");
     options.SupportedCultures = supportedCultures;
     options.SupportedUICultures = supportedCultures;
-    options.RequestCultureProviders.Insert(0, new CookieRequestCultureProvider());
+    for (int i = options.RequestCultureProviders.Count - 1; i >= 0; i--)
+    {
+        var p = options.RequestCultureProviders[i];
+        if (p is CookieRequestCultureProvider || p is AcceptLanguageHeaderRequestCultureProvider)
+            options.RequestCultureProviders.RemoveAt(i);
+    }
 });
 
 var app = builder.Build();

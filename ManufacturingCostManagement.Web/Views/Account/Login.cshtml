@@ -5,6 +5,7 @@
     Layout = null;
     var currentCulture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
     var returnUrl = Context.Request.Path + Context.Request.QueryString;
+    var basePath = Context.Request.Path;
 }
 <!DOCTYPE html>
 <html lang="@currentCulture">
@@ -226,8 +227,8 @@
         <div class="brand-panel">
             <div class="lang-toggle">
                 🌐
-                <a class="@(currentCulture == "en" ? "active-lang" : "")" href="/Language/Set?culture=en&returnUrl=@returnUrl">EN</a>|
-                <a class="@(currentCulture == "vi" ? "active-lang" : "")" href="/Language/Set?culture=vi&returnUrl=@returnUrl">VI</a>
+                <a class="@(currentCulture == "en" ? "active-lang" : "")" href="@basePath?culture=en">EN</a>|
+                <a class="@(currentCulture == "vi" ? "active-lang" : "")" href="@basePath">VI</a>
             </div>
             <div class="brand-logo">
                 <span class="logo-mark">⚙</span>
@@ -344,5 +345,16 @@
         </div>
     </section>
     </div>
+    <script>
+        (function () {
+            try {
+                var url = new URL(window.location.href);
+                if (url.searchParams.has('culture')) {
+                    url.searchParams.delete('culture');
+                    window.history.replaceState({}, '', url.pathname + (url.search || '') + url.hash);
+                }
+            } catch (e) { /* old browser, ignore */ }
+        })();
+    </script>
 </body>
 </html>
